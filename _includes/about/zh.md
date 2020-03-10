@@ -1,46 +1,18 @@
-> 离开世界之前，一切都是过程。
+> 承认自己很菜，才能变得更强。
 
-Hi，我是黄玄，前端 Online NPC，编程语言/编译器初心者，[Facebook](https://www.facebook.com/) 签约软件工程师，[广院](https://baike.baidu.com/item/%E4%B8%AD%E5%9B%BD%E4%BC%A0%E5%AA%92%E5%A4%A7%E5%AD%A6)认证数字设计师。我曾被招募为阿里巴巴 · [阿里旅行（飞猪）](http://alitrip.com)· 前端工程师、微影时代 · 微票儿 · 前端基础设施工程团队负责人、[饿了么](https://ele.me/) · 大前端团队 · [PWA 顾问](https://medium.com/elemefe/upgrading-ele-me-to-progressive-web-app-2a446832e509) 等。
-
-目前的物理活动范围主要在美帝，分身日常出没于[博客](https://huangxuan.me)、[微博](https://weibo.com/huxpro)、[知乎](https://www.zhihu.com/people/huxpro/pins/posts)、[Twitter](https://twitter.com/Huxpro/)、[Github](https://github.com/huxpro)、[Medium](https://medium.com/@Huxpro)。
+Hi，我是林鹏，本科就读于深圳大学电子信息工程专业，现在中国科学院深圳先进技术研究院攻读研究生，方向是用深度学习检测网络异常。作为一名兴趣广泛的编程爱好者，我努力过，也迷茫过。大一的时候，是单片机带我进入了编程的世界，用C语言与底层硬件打交道的过程，如今仍让我记忆尤深。大一的暑假，我获得了广东省大学生电子设计大赛一等奖，但我没有在硬件的道路上继续走下去，我好奇，我想了解更多未曾接触的知识。后来，我学习过安卓开发，Web开发，小程序开发，并获得了全国大学生计算机设计大赛（Web开发组）二等奖、广东省一等奖。然而，一个人兴趣广泛，你也可以称他为学艺不精，虽然他接触的知识多，但却没有一样是精通的。在本科毕业前夕，我明白了这个道理，并认为我不能取得很好的offer，所以我选择了保研，来逃避工作危机。但，现在我很开心，因为我明确了我要努力的方向——成为一名Web渗透工程师。虽然我现在还是一个小白，但我希望这个博客能记录我成长的过程，见证我一步步从“小白”成长成一名“白帽子”。正如上面所说的，承认自己很菜，才能变得更强。
 
 
-##### 编程语言倾向
+##### 我的一些论文
 
-我倾向于 ML（“Meta Language”）等「函数式编程为主（mostly functional programming）」风格的编程语言，所以也就不难理解我的很多选择了：JavaScript 于动态类型、Scala 于 JVM 语言、Rust 于非托管语言等。
+[1] Lin P, Ye K, Xu C Z. Netdetector: an anomaly detection platform for networked systems[C]//IEEE International Conference on Real-time Computing and Robotics. 2019: 69-74.
 
-> __从左到右__ 为喜欢程度，__从上到下__ 为了解程度，__版本__ 表示下界。
+[2] Lin P, Ye K, Xu C Z. Dynamic network anomaly detection system by using deep learning techniques[C]//International Conference on Cloud Computing. Springer, Cham, 2019: 161-176.
 
-|     | 💔️           | ❤️ ️                   | ❤️❤️ ️             | ❤️❤️❤️ ️               |
-| --- | ------------- | ---------------------- | ------------------ | ---------------------- |
-| 😅  | `PHP` `BASIC` | `ObjC` `Prolog` `Hack` | `Kotlin` `Dart`    | `Swift` `Agda` `Idris` |
-| 🧐  |               | `Asm` `C++`  `Lisp*`   | `C++11` `C#` `AS3` | `Scala` `Rust`         |
-| 😏  | `Shell`       | `C` `Java` `Python`    | `Typed JS*` `Wasm` | `Haskell` `Coq` `ML*`  |
-| 🤓  |               | `JavaScript`           | `ECMAScript6`      | `λ` `Λ` `Π` `Σ`        |
-
-> __`ML*` 家族__：`OCaml` `ReasonML` `Standard ML`  
-> __`Lisp*` 家族__：`Clojure` `Scheme` `Racket`  
-> __`Typed JS*`__：`Flow` `TypeScript`
+[3] Lin P, Ye K, Chen M, et al. DCSA: Using Density-Based Clustering and Sequential Association Analysis to Predict Alarms in Telecommunication Networks[C]//2019 IEEE 25th International Conference on Parallel and Distributed Systems (ICPADS). IEEE, 2019: 1-8.
 
 
-##### 演讲与分享
+##### 专利及软著
+[专利] 电信网络告警预测方法及系统. PCT/CN2019/098807 (受理)
 
-- [Upgrading to Progressive Web Apps][9] · [JSConf CN 上海 2017](http://2017.jsconf.cn/)
-- Building Progressive Web Apps · [CSDI 广州 2017](http://www.csdisummit.com/)
-- The State of Progressive Web App · GDG IO Redux 北京 2017
-- 炒冷饭 · PWA 到底是个什么玩意？· Baidu HQ 北京 2017
-- [Service Worker 101][5] · GDG DevFest 北京 2016
-- [Progressive Web App，复兴序章][4] · [QCon 上海 2016](http://2016.qconshanghai.com/presentation/3111)
-- Progressive Web App 之我见 · GDG IO Redux 北京 2016
-- [CSS Still Sucks 2015][2] · 2015
-- [JavaScript 模块化七日谈][1] · 2015
-
-[1]: //huangxuan.me/2015/07/09/js-module-7day/
-[2]: //huangxuan.me/2015/12/28/css-sucks-2015/
-[3]: //huangxuan.me/2016/06/05/pwa-in-my-pov/
-[4]: //huangxuan.me/2016/10/20/pwa-qcon2016/
-[5]: //huangxuan.me/2016/11/20/sw-101-gdgdf/
-[6]: https://yanshuo.io/assets/player/?deck=58ac8598b123db0067292f92 "PWA Rehashing"
-[7]: https://yanshuo.io/assets/player/?deck=593ad6fbfe88c2006a0a0d6d "The State of PWA"
-[8]: https://yanshuo.io/assets/player/?deck=594d673d570c357d0698a950 "Building PWA"
-[9]: //huangxuan.me/jsconfcn2017/
+[软著] xDetector网络异常检测平台[简称：xDetector]V1.0. 登记号：2019SR0365334
