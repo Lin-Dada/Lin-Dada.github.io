@@ -49,7 +49,7 @@ C语言、数据结构、计算机网络、密码学、网络攻防基础、机�
 <br>参见论文： [DCSA: Using Density-Based Clustering and Sequential Association Analysis to Predict Alarms in Telecommunication Networks](https://ieeexplore.ieee.org/abstract/document/8975812/)
 
 3. C语言学习助手 [演示链接](https://v.qq.com/x/page/c0866jusibh.html)<br>
-![家用云智能血压计系统](/img/in-post/about/apphome.PNG '家用云智能血压计')
+![家用云智能血压计系统](/img/in-post/about/apphome.png '家用云智能血压计')
 
 4. 家用云智能血压计系统 [演示链接](https://v.youku.com/v_show/id_XMTY5NTM3NjcwMA==.html)
 <br>![家用云智能血压计系统](/img/in-post/about/xyj.jpg '家用云智能血压计')
