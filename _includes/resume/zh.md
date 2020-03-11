@@ -55,7 +55,7 @@ C语言、数据结构、计算机网络、密码学、网络攻防基础、机�
 <img src="/img/in-post/about/homework.PNG" width = "165"  align=left/>
 
 4. 家用云智能血压计系统 [演示链接](https://v.youku.com/v_show/id_XMTY5NTM3NjcwMA==.html)
-<br>![NetDetector](/img/in-post/about/netdetector.PNG 'NetDetector')
+<br>![家用云智能血压计系统](/img/in-post/about/xyj.jpg '家用云智能血压计')
 
 5. 其他
 	+	新闻文本分类系统
