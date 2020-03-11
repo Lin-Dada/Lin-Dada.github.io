@@ -78,7 +78,7 @@ ga_domain: huangxuan.me
 
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
-sidebar-about-description: "承认自己的菜<br>才能让自己变强"
+sidebar-about-description: "承认自己很菜<br>才能让自己变强"
 sidebar-avatar: /img/avatar-lindada.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 

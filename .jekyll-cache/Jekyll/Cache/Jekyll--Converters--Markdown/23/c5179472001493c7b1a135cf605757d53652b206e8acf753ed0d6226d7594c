@@ -1,0 +1,117 @@
+I" <blockquote>
+  <p>说来惭愧，作为一个常年依靠各种博客教程才能勉强活得下去的coder，却很少写博客。主要是觉得要工工整整地把所有知识点记录下来，需要花费大量的时间。所以总是遇到一个问题就查一个问题，解决完就扔到脑后了，最多在记事本上简单记两下。Emmm，随着时间流逝，那些仅存的“足迹”也被遗忘在各个角落，感觉自己什么也没有留下来。幡然醒悟，做人还是体系化一点好，养成良好的习惯很重要…最近也开始在网上记录一些东西了，主要是在CSDN和有道云笔记上，但CSDN的界面实在太丑，广告又多；有道云笔记对内容的公开不是特别方便，所以决定搭建一个自己的博客，看起来顺心一点。本模板使用github pages 和 jekyll搭建而成，具体的搭建过程写在下面了，希望对想使用github pages搭建个人博客的人提供一点帮助。</p>
+</blockquote>
+
+<h3 id="前言">前言</h3>
+<p>本文参照了 <a href="https://github.com/Huxpro/huxpro.github.io">Hux</a> 的博客模板，使用是github pages 和 jekyll搭建而成。github pages一般多用于托管个人的静态网站，可以理解为github提供的免费的搭建个人主页的资源，选择github pages主要原因如下：</p>
+<ol>
+  <li>免费提供1G以内的静态资源托管，利用它我们可以搭建个人主页或者博客，而省去了购买服务器的钱，不用白不用。</li>
+  <li>github是程序员经常使用的平台，将博客挂在上面方便我们的管理。</li>
+  <li>比较有bigger</li>
+</ol>
+
+<p>github pages只能放置静态资源，也就是不能进行后台的逻辑交互，所以我们需要把我们的博客转成静态资源，再放到上面去。怎么转？自己手撸html代码吗？当然不，jekyll就是帮我们来做这件事情的。它能将markdown文档转换成静态的资源文件，让我们只专注于写博客的过程。因为缺少后台的交互，所以不能评论和留言，不能在线编辑文章，但其实我们也不一定需要这两件事情。总的来说，要完成这个博客的搭建和文章写作，你应：</p>
+<ol>
+  <li>安装jekyll</li>
+  <li>拥有github账户</li>
+  <li>安装Git环境</li>
+  <li>会用markdown</li>
+</ol>
+
+<p>之后的教程将按照如下顺序展开：</p>
+<ul>
+  <li>安装环境（Windows）
+    <ul>
+      <li>安装Ruby+Devkit</li>
+      <li>安装RubyGem</li>
+      <li>安装jekyll</li>
+      <li>安装jekyll-pageinate</li>
+      <li>安装bundler</li>
+    </ul>
+  </li>
+  <li>github设置</li>
+  <li>模板修改</li>
+</ul>
+
+<h3 id="安装环境">安装环境</h3>
+<p>jekyll在Windows、Mac和Linux下都能安装，而且除了Windows其他两个还很简单。没办法。。用的是Windows，麻烦就麻烦了。</p>
+
+<h4 id="1安装ruby环境">1.安装Ruby环境</h4>
+<p>首先在<a href="https://rubyinstaller.org/downloads/">官网下载</a>Ruby+Devkit安装包,我下载的是推荐的版本。安装过程记得勾选添加到PATH，免去设置环境变量的操作。
+<img src="/img/in-post/blogbuild/ruby.png" alt="Ruby" title="Ruby" width="400" /></p>
+
+<p>最后一步勾选这个：
+<img src="/img/in-post/blogbuild/rubyfinish.png" alt="RubyFinish" title="RubyFinish" width="400" /></p>
+
+<p>在弹出的框中选择3：
+<img src="/img/in-post/blogbuild/rubyinstaller.png" alt="RubyInstaller" title="RubyInstaller" /></p>
+
+<h4 id="2安装rubygem">2.安装RubyGem</h4>
+<p>Gem是Ruby下的一个下载工具，类似于Python的pip。到<a href="https://rubygems.org/pages/download">这里</a>下载安装，选择压缩包zip下载，这里就不贴图了。下载完之后将zip文件解压到任意文件夹，并进入该文件夹下，在当前路径打开cmd命令行，输入：
+<code class="highlighter-rouge">ruby setup.rb</code></p>
+
+<h4 id="3安装jekyll">3.安装jekyll</h4>
+<p>在cmd中输入：
+<code class="highlighter-rouge">gem install jekyll</code></p>
+
+<h4 id="4安装jekyll">4.安装jekyll</h4>
+<p>在cmd中输入：
+<code class="highlighter-rouge">gem install jekyll-paginate</code></p>
+
+<h4 id="5安装bundler">5.安装bundler</h4>
+<p>在cmd中输入：
+<code class="highlighter-rouge">gem install bundler</code></p>
+
+<h4 id="6安装时遇到的问题">6.安装时遇到的问题</h4>
+<p>在进行第3步的时候，发现输入命令后等待时间很久都没反应，考虑可能是服务器在国外，下载网速太慢导致，这里我通过更换源解决。</p>
+
+<p>先查看当前的源：
+<code class="highlighter-rouge">gem sources -l</code>  如无意外，默认的源是 https://rubygems.org/，我们将其删除：
+<code class="highlighter-rouge">gem sources -r https://rubygems.org/</code></p>
+
+<p>再添加国内可用的源:
+<code class="highlighter-rouge">gem sources --add https://gems.ruby-china.com</code></p>
+
+<p>再执行3、4、5步，发现飞一般的感觉~</p>
+
+<h4 id="7验证环境">7.验证环境</h4>
+<p>如果上述步骤完成，jekyll环境应该是搭好了，cmd中使用指令<code class="highlighter-rouge">jekyll -v</code>查看当前版本，我的版本是4.0.0</p>
+
+<p>接下来我们可以使用jekyll生成一个默认的博客模板，看一下是否能正常运行。先进入你准备存放博客数据的文件夹，然后在cmd中输入：
+<code class="highlighter-rouge">jekyll add blogtest</code></p>
+
+<p>上述命令在我电脑中运行实测要运行非常久，不知是何原因，生成的文件夹只有几kb大小而已，一定要等它运行完哦，不然生成的博客模板不完整，运行不了哦。反正经过半个小时的漫长等待，它终于跑完了。。。
+跑完之后在你选择的路径应该会出现blogtest文件夹，里面的数据内容为：
+<img src="/img/in-post/blogbuild/blogtest.png" alt="blogtest" title="blogtest" /></p>
+
+<p>回到命令行，输入以下指令：</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre>cd blogtest
+jekyll serve
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>这样，jekyll就把我们刚刚建立的模板运行起来啦，可以在浏览器访问 127.0.0.1:4000 访问（下面的页面我做了简单修改，你看到的可能不是这个样子的）：
+<img src="/img/in-post/blogbuild/testview.png" alt="testview" title="testview" /></p>
+
+<p>说明环境配置莫得问题！接下来就是要替换其他的模板啦！</p>
+
+<h3 id="github设置">github设置</h3>
+<p>我们首先需要将模板项目fork到自己的github上，这里推荐fork 原作者<a href="https://github.com/Huxpro/huxpro.github.io">Hux Github</a> 的，不要fork我的。
+打开链接，右上角fork，搞定。</p>
+
+<p>然后回到自己的主页，打开刚刚fork的项目,点“Setting”页，将项目重命名为 ***.github.io ，其中***的部分一定要跟你的用户名一模一样，这样github才能识别到这是你的github pages项目。
+<img src="/img/in-post/blogbuild/rename.png" alt="rename" title="rename" /></p>
+
+<p>现在可以把项目clone下来了，这里需要一些Git的知识，不了解的话可以参考以下教程：
+<a href="https://blog.csdn.net/qq_41782425/article/details/85183250">最新GitHub新手使用教程(Windows Git从安装到使用)——详细图解</a></p>
+
+<p>###模板修改
+模板下载下来之后，可以按照上述运行测试环境的步骤，运行下载下来的模板：进入该文件夹，命令行输入：
+<code class="highlighter-rouge">jekyll serve</code> 然后到127.0.0.1:4000 观察是否看到页面。</p>
+
+<p>下面我们修改模板，让它变成我们的博客。具体配置可参考 <a href="https://github.com/Huxpro/huxpro.github.io/blob/master/README.zh.md">Hux的中文教程</a>，我们下面简单说一下：</p>
+
+<p>文件夹内的文件跟刚刚的blogtest结构差不多，最重要的配置文件在根目录下的_config.yml ，这个文件设置了博客的主要信息，比如：简介、友情链接、是否使用标签、统计接口等。</p>
+
+:ET
