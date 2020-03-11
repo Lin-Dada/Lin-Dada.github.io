@@ -182,12 +182,12 @@ git push -u origin master
 完，嘿嘿~
 
 ### 更多阅读
-[Hux的中文教程](https://github.com/Huxpro/huxpro.github.io/blob/master/README.zh.md)
-[Jekyll + Github Pages 博客搭建入门](https://www.jianshu.com/p/9f198d5779e6)
-[你想写自己的博客吗，jekyll](https://zhuanlan.zhihu.com/p/35859756)
-[三步搞定Github Pages自定义域名](https://www.jianshu.com/p/2647e079741f)
-[Github Pages + CDN全站加速](https://www.jianshu.com/p/ccc0cc8c14a0)
-[Markdown 教程](https://www.runoob.com/markdown/md-tutorial.html)
+- [Hux的中文教程](https://github.com/Huxpro/huxpro.github.io/blob/master/README.zh.md)
+- [Jekyll + Github Pages 博客搭建入门](https://www.jianshu.com/p/9f198d5779e6)
+- [你想写自己的博客吗，jekyll](https://zhuanlan.zhihu.com/p/35859756)
+- [三步搞定Github Pages自定义域名](https://www.jianshu.com/p/2647e079741f)
+- [Github Pages + CDN全站加速](https://www.jianshu.com/p/ccc0cc8c14a0)
+- [Markdown 教程](https://www.runoob.com/markdown/md-tutorial.html)
 
 
 
