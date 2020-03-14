@@ -1,0 +1,39 @@
+I"�	<blockquote>
+  <p>本文介绍了一些测试网站是否存在SQL注入漏洞的技巧，总结了几种SQL注入方式（如：Union注入、布尔注入、报错注入、时间注入、宽字节注入等），并介绍了一些简单的绕过方式。</p>
+</blockquote>
+
+<h3 id="sql注入介绍">SQL注入介绍</h3>
+<h4 id="漏洞原理">漏洞原理</h4>
+<p>SQL注入是指Web应用对用户输入的数据过滤不严，使得从前端传入后端的参数是攻击者可控的，并且参数带进了数据库查询。攻击者可以利用SQL注入漏洞，通过构造不同的payload来实现对数据库的任意操作。</p>
+
+<p>存在SQL注入的两个前提：</p>
+<ul>
+  <li>参数是用户可控的</li>
+  <li>参数会被带进数据库查询</li>
+</ul>
+
+<p>以常用的SQL查询语句为例：
+<code class="highlighter-rouge">select * from user where id = '$_GET['id']'</code>
+在这个查询语句中，<code class="highlighter-rouge">$_GET['id']</code>是PHP通过GET请求接收的用户所输入的数据，被带到SQL数据库进行查询，当id为不同的值时，服务器将返回不同的内容。
+如果用户输入的是一段SQL语句，则这段语句也将会被带进来查询，从而实现了SQL注入。比如用户输入的id数据为：<code class="highlighter-rouge">1' or 1=1# '</code>，查询语句将变为：
+<code class="highlighter-rouge">select * from user where id = '1' or 1=1# ''</code>
+该语句将返回所有的查询结果。
+上面#号是SQL中的注释符类似的还有<code class="highlighter-rouge">-- </code>，<code class="highlighter-rouge">/**/</code></p>
+
+<p>以上都是一些SQL注入应该知道的基本概念，这里解释得不是很完整，不清楚的读者可以自行搜索资料了解。</p>
+
+<h4 id="与注入相关的mysql重要知识点">与注入相关的MySQL重要知识点</h4>
+<p>(1) order by 语法</p>
+
+<p>order by 语句用于根据指定的列（比如第四列）对结果集进行排序，默认为升序。</p>
+
+<p>如：</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre>select * from user order by 1  --按照第一列升序进行排序，返回结果
+select * from user order by 1 desc --按照第一列升序进行排序，返回结果
+select * from user order by 1 ASC  --按照第一列降序进行排序，返回结果
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+:ET

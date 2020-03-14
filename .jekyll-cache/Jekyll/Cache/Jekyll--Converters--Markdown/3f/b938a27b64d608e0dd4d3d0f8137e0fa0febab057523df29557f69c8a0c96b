@@ -1,0 +1,93 @@
+I"E<blockquote>
+  <p>环境：Apache+php+mysql (Windows 10，PC机)</p>
+</blockquote>
+
+<h3 id="搭建步骤">搭建步骤</h3>
+<p>1、先进入phpmyadmin中新建一个数据库，用于待会存放xsser的数据，名字可以随便取，如xxsplatform：
+<img src="/img/in-post/xsser/mysqlsetting.png" alt="xssplatform" title="xssplatform" /></p>
+
+<p>2、然后把xsser的源码（放在文末了）解压，放在网站的目录下，我的是D:/AppServ/www/XSS
+下面要执行几步操作：
+1.到phpmyadmin中，打开刚刚新建的数据库xxsplatform，选择导入，把D:/AppServ/www/XSS目录下的xssplatform.sql导入进数据库中。
+<img src="/img/in-post/xsser/import.png" alt="import" title="import" />
+2.执行SQL命令，将数据库中的xxser.me的网址改为本机的地址：
+UPDATE oc_module SET code=REPLACE(code,’http://xsser.me’,’http://localhost/xss’)
+<img src="/img/in-post/xsser/excute.png" alt="excute" title="excute" />
+3.修改D:/AppServ/www/XSS目录下的config.php文件，主要修改内容为红框部分：
+<img src="/img/in-post/xsser/config.png" alt="config" title="config" />
+数据库信息：包括地址、用户名和密码和数据库名，这些要与你本机的数据库信息一致，<strong>数据库名</strong>填我们刚刚创建的xxsplatform。
+<strong>注册模式</strong>要改成 normal，即正常注册模式
+<strong>网站URL</strong>填你网站实际存放的地址，我的是XSS
+4.验证XSS目录下authtest.php的域名是否是本机地址，如果不是则修改：
+<img src="/img/in-post/xsser/check.png" alt="check" title="check" /></p>
+
+<p>3、完成以上4步之后，可以在浏览器打开127.0.0.1/xss，注册用户啦
+<img src="/img/in-post/xsser/register.png" alt="register" title="register" /></p>
+
+<p>如无意外会注册成功，接下来打开phpmyadmin中修改用户的权限：打开oc_user表，选择刚刚创建的用户，将其adminlevel改成1（root权限）。
+<img src="/img/in-post/xsser/adminlevel.png" alt="adminlevel" title="adminlevel" /></p>
+
+<p>4、接下来执行最后一步，配置伪静态文件，如果这一步没配置好的话，后面xsser生成的项目链接将不可访问。
+在XSS目录下新建文件 .htaccess （前面有个 .  没有后缀）</p>
+
+<p>输入以下代码，保存即可。</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="rouge-code"><pre>&lt;ifmodule mod_rewrite.c&gt;
+RewriteEngine On
+RewriteBase /xss
+RewriteRule ^([0-9a-zA-Z]{6})$ /xss/index.php?do=code&amp;urlKey=$1 [L]
+RewriteRule ^do/auth/(\w+?)(/domain/([\w\.]+?))?$ /xss/index.php?do=do&amp;auth=$1&amp;domain=$3 [L]
+RewriteRule ^register/(.*?)$ /xss/index.php?do=register&amp;key=$1 [L]
+RewriteRule ^register-validate/(.*?)$ /xss/index.php?do=register&amp;act=validate&amp;key=$1 [L]
+&lt;/ifmodule&gt;
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="遇到的坑">遇到的坑：</h3>
+<p>(1)注册用户失败
+。 我也不知道为什么，试了好多遍还是提示注册失败，后面把文件和数据库全删掉，重新来一遍，就可以了，可能是我第一次的配置过程有问题，某些配置文件写错了。</p>
+
+<p>(2)配置伪静态文件不成功
+把 .htaccess文件写好之后，打开127.0.0.1/xss之后提示 500 Internal Server Error，网上一番搜索，可能的原因如下：</p>
+<ul>
+  <li>apache的配置中没打开AllowOverride，所以规则不能重写，解决方法如下：把Apache配置文件httpd.conf打开（在Apache目录下），将相关代码改为（原本AllowOverride这里是none）：</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre>&lt;Directory /&gt; 
+    Options FollowSymLinks 
+    AllowOverride All
+    Order allow,deny 
+    Allow from all 
+&lt;/Directory&gt; 
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<ul>
+  <li>mod_rewrite模块没有打开，把Apache配置文件httpd.conf中的LoadModule rewrite_module modules/mod_rewrite.so这一行前面的注释符#删掉
+<br />但是我修改了配置还是不成功，依然提示500 Internal Server Error，很烦恼，遂打开Apache错误日志，发现错误信息如下：
+<strong>D:/AppServ/www/XSS/.htaccess: RewriteEngine must be On or Off</strong>
+<br />
+但是我htaccess文件中明明打开了RewriteEngine，怎么会提示这个呢？然后我尝试把On改成Off，居然可以访问了？我又把Off改回On，不能访问了，但是错误信息改变了，变成了：
+<br />
+<strong>D:/AppServ/www/XSS/.htaccess: RewriteRule: bad flag delimiters</strong>
+？？？怎么错误变了？？翻译大概是错误的分隔符的意思。很自然联想到，是不是代码中有编码错误？但是我仔细检查一番，跟一些参考书上的一模一样，也没有中文符号。很是沮丧，尝试将代码手打一遍（原来那个代码是网上copy的），奇迹出现了，居然成功了。。。
+<br />
+所以应该是网上的代码复制下来的之后，存在一些奇奇怪怪的编码问题，看不到。。但就是有问题。所以如果大家发现跟我一样的报错，还是老老实实手打一遍吧。。。</li>
+</ul>
+
+<h3 id="源代码下载">源代码下载</h3>
+<p>最后附上xsser的源代码：
+链接: <a href="https://pan.baidu.com/s/17LwVYE3KTxWwBCZ0JGZ6kw">https://pan.baidu.com/s/17LwVYE3KTxWwBCZ0JGZ6kw</a> 提取码: aqyx</p>
+
+:ET

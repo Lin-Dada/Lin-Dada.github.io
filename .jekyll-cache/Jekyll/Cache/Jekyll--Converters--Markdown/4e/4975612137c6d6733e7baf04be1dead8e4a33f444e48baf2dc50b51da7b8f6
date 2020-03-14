@@ -1,0 +1,19 @@
+I"X<p>查看当前虚拟环境列表：
+<code class="highlighter-rouge">conda env list</code></p>
+
+<p>新建虚拟环境：
+<code class="highlighter-rouge">conda create -n transfer python=3.6</code></p>
+
+<p>删除虚拟环境：
+<code class="highlighter-rouge">conda remove -n your_env_name(虚拟环境名称) --all</code></p>
+
+<p>激活虚拟环境：
+<code class="highlighter-rouge">activate tensorflow-gpu</code></p>
+
+<p>退出：
+<code class="highlighter-rouge">deactivate</code></p>
+
+<p>打开jupyter notebook：(先进入虚拟环境)
+<code class="highlighter-rouge">jupyter-notebook</code></p>
+
+:ET
