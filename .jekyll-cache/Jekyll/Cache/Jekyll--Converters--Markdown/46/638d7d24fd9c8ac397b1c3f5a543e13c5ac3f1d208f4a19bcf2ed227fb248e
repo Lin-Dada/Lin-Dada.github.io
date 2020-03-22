@@ -1,0 +1,219 @@
+I"�3<blockquote>
+  <p>最近一门课要求做大作业，题目是一个文件安全传输系统，涉及到的知识点有socket、ssl证书申请、使用ssl证书加密通信、GUI、多线程等，还是蛮多内容的。我花了三四天做了个简单的Demo，中间遇到了许多问题，但最后还是一一解决了。后面我会将完整代码放到我的github上，本文记录了核心功能的实现思路。</p>
+</blockquote>
+
+<h3 id="openssl申请证书">OpenSSL申请证书</h3>
+<p>注意三点</p>
+<ul>
+  <li>
+    <p>第一点，注意将其中的私钥加密密码（-passout参数）修改成自己的密码；下边都是以带-passout参数生成私钥，如果使用-nodes参数，则最后一步“将加密的RSA密钥转成未加密的RSA密钥”不需要执行。</p>
+  </li>
+  <li>
+    <p>第二点，证书和密钥给出了直接一步生成和分步生成两种形式，两种形式是等价的，这里使用直接生成形式（分步生成形式被注释）</p>
+  </li>
+  <li>
+    <p>第三点，注意将其中的证书信息改成自己的组织信息的。其中证数各参数含义如下：</p>
+  </li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+</pre></td><td class="rouge-code"><pre>C-----国家（Country Name）
+
+ST----省份（State or Province Name）
+
+L----城市（Locality Name）
+
+O----公司（Organization Name）
+
+OU----部门（Organizational Unit Name）
+
+CN----产品名（Common Name）
+
+emailAddress----邮箱（Email Address）
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre></td><td class="rouge-code"><pre># CA证书及密钥生成方法一----直接生成CA密钥及其自签名证书
+openssl req -newkey rsa:2048 -nodes -keyout ca_rsa_private.pem -x509 -days 365 -out ca.crt -subj "/C=CN/ST=GD/L=SZ/O=COM/OU=NSP/CN=CA/emailAddress=173213354@qq.com"
+
+# 服务器证书及密钥生成方法一----直接生成服务器密钥及待签名证书
+openssl req -newkey rsa:2048 -nodes -keyout server_rsa_private.pem  -out server.csr -subj "/C=CN/ST=GD/L=SZ/O=COM/OU=NSP/CN=SERVER/emailAddress=173213354@qq.com"
+
+# 使用CA证书及密钥对服务器证书进行签名：
+openssl x509 -req -days 365 -in server.csr -CA ca.crt -CAkey ca_rsa_private.pem -CAcreateserial -out server.crt
+
+# 客户端证书及密钥生成方法一----直接生成客户端密钥及待签名证书
+openssl req -newkey rsa:2048 -nodes -keyout client_rsa_private.pem -out client.csr -subj "/C=CN/ST=GD/L=SZ/O=COM/OU=NSP/CN=CLIENT/emailAddress=173213354@qq.com"
+
+# 使用CA证书及密钥对客户端证书进行签名：
+openssl x509 -req -days 365 -in client.csr -CA ca.crt -CAkey ca_rsa_private.pem -CAcreateserial -out client.crt
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="python中实现双向验证">Python中实现双向验证</h3>
+
+<p>我找了好久网上的资料，绝大部分代码都只实现了单向验证，即只验证服务器的证书，而不验证客户端的证书。查了好久资料，终于发现双向验证的方法，一行代码的事，即打开双向校验模式。</p>
+
+<h4 id="服务器端核心代码">服务器端：（核心代码）</h4>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">ssl</span><span class="p">,</span> <span class="n">threading</span><span class="p">,</span> <span class="n">struct</span><span class="p">,</span> <span class="n">json</span><span class="p">,</span> <span class="n">os</span><span class="p">,</span> <span class="n">pymysql</span>
+
+<span class="k">class</span> <span class="nc">server_ssl</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">server_listen</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># 生成SSL上下文
+</span>        <span class="n">context</span> <span class="o">=</span> <span class="n">ssl</span><span class="o">.</span><span class="n">SSLContext</span><span class="p">(</span><span class="n">ssl</span><span class="o">.</span><span class="n">PROTOCOL_TLS_SERVER</span><span class="p">)</span>
+        <span class="c1"># 加载信任根证书
+</span>        <span class="n">context</span><span class="o">.</span><span class="n">load_verify_locations</span><span class="p">(</span><span class="s">'./cer/CA/ca.crt'</span><span class="p">)</span>
+        <span class="c1"># 加载服务器所用证书和私钥
+</span>        <span class="n">context</span><span class="o">.</span><span class="n">load_cert_chain</span><span class="p">(</span><span class="s">'./cer/server/server.crt'</span><span class="p">,</span> <span class="s">'./cer/server/server_rsa_private.pem'</span><span class="p">)</span>
+        <span class="c1"># 双向校验模式
+</span>        <span class="n">context</span><span class="o">.</span><span class="n">verify_mode</span> <span class="o">=</span> <span class="n">ssl</span><span class="o">.</span><span class="n">CERT_REQUIRED</span>
+
+        <span class="c1"># 监听端口
+</span>        <span class="k">with</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">as</span> <span class="n">sock</span><span class="p">:</span>
+            <span class="n">sock</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="s">'127.0.0.1'</span><span class="p">,</span> <span class="mi">9999</span><span class="p">))</span>
+            <span class="n">sock</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+            <span class="c1"># 将socket打包成SSL socket
+</span>            <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">wrap_socket</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span> <span class="n">server_side</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">ssock</span><span class="p">:</span>
+                <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+                    <span class="c1"># 接收客户端连接
+</span>                    <span class="n">connection</span><span class="p">,</span> <span class="n">addr</span> <span class="o">=</span> <span class="n">ssock</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+                    <span class="k">print</span><span class="p">(</span><span class="s">'Connected by '</span><span class="p">,</span> <span class="n">addr</span><span class="p">)</span>
+                    <span class="c1">#开启多线程,这里arg后面一定要跟逗号，否则报错
+</span>                    <span class="n">thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">conn_thread</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">connection</span><span class="p">,))</span>
+                    <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">conn_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">connection</span><span class="p">):</span>
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1">#这里写你的服务器逻辑
+</span>                <span class="o">...</span>
+                <span class="o">...</span>
+                
+            <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">timeout</span><span class="p">:</span>
+                <span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">break</span>
+            <span class="k">except</span> <span class="nb">ConnectionResetError</span><span class="p">:</span>
+                <span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">break</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h4 id="客户端">客户端：</h4>
+
+<p>客户端还要实现图像界面，这里使用python的tkinter库实现，GUI的细节就不多讲了,socket代码如下：</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">ssl</span><span class="p">,</span><span class="n">time</span><span class="p">,</span><span class="n">os</span><span class="p">,</span><span class="n">struct</span><span class="p">,</span><span class="n">json</span><span class="p">,</span><span class="n">tkinter</span>
+
+<span class="k">class</span> <span class="nc">client_ssl</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># 生成SSL上下文
+</span>        <span class="n">context</span> <span class="o">=</span> <span class="n">ssl</span><span class="o">.</span><span class="n">SSLContext</span><span class="p">(</span><span class="n">ssl</span><span class="o">.</span><span class="n">PROTOCOL_TLS_CLIENT</span><span class="p">)</span>
+        <span class="c1"># 加载信任根证书
+</span>        <span class="n">context</span><span class="o">.</span><span class="n">load_verify_locations</span><span class="p">(</span><span class="s">'./cer/CA/ca.crt'</span><span class="p">)</span>
+        <span class="c1"># 加载客户端所用证书和私钥
+</span>        <span class="n">context</span><span class="o">.</span><span class="n">load_cert_chain</span><span class="p">(</span><span class="s">'./cer/client/client.crt'</span><span class="p">,</span> <span class="s">'./cer/client/client_rsa_private.pem'</span><span class="p">)</span>
+        <span class="c1"># 双向校验模式
+</span>        <span class="n">context</span><span class="o">.</span><span class="n">verify_mode</span> <span class="o">=</span> <span class="n">ssl</span><span class="o">.</span><span class="n">CERT_REQUIRED</span>
+
+        <span class="c1"># 与服务端建立socket连接
+</span>        <span class="bp">self</span><span class="o">.</span><span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">create_connection</span><span class="p">((</span><span class="s">'127.0.0.1'</span><span class="p">,</span> <span class="mi">9999</span><span class="p">))</span>
+
+        <span class="c1"># 将socket打包成SSL socket
+</span>        <span class="c1"># 一定要注意的是这里的server_hostname是指服务端证书中设置的CN
+</span>        <span class="bp">self</span><span class="o">.</span><span class="n">ssock</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">wrap_socket</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sock</span><span class="p">,</span> <span class="n">server_hostname</span><span class="o">=</span><span class="s">'SERVER'</span><span class="p">,</span> <span class="n">server_side</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        
+    <span class="c1">#下面开始定义你自己的客户端逻辑函数
+</span>    <span class="k">def</span> <span class="err">...
+    
+    </span><span class="nf">def</span> <span class="o">...</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+:ET
