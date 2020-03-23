@@ -1,0 +1,23 @@
+I"<p><code class="highlighter-rouge">#vim /etc/ssh/sshd_config</code></p>
+
+<p>找到下面两行</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre>#ClientAliveInterval 0
+#ClientAliveCountMax 3
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>去掉注释，改成</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre>ClientAliveInterval 30
+ClientAliveCountMax 86400
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>这两行的意思分别是</p>
+<ol>
+  <li>客户端每隔多少秒向服务发送一个心跳数据</li>
+  <li>客户端多少秒没有相应，服务器自动断掉连接
+重启sshd服务
+<code class="highlighter-rouge">#service sshd restart</code></li>
+</ol>
+
+:ET
