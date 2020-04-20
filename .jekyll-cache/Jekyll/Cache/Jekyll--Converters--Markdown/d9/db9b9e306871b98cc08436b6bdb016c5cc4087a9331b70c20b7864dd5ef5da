@@ -1,0 +1,62 @@
+I"�<blockquote>
+  <p>有一段时间没更新博客了，因为最近实在太忙了，为什么在家上网课作业感觉比在学校的还多？真是太狠了。这篇文章其实也是一门课的实验体会，做的是缓冲区溢出的实验，题目是CTF-wiki的四道pwn题，算是非常经典的题目了。这个实验让我也接触了一下pwn，还挺有意思的。</p>
+</blockquote>
+
+<h2 id="缓冲区溢出原理">缓冲区溢出原理</h2>
+
+<p>下图显示了一个栈的工作原理，左边是内存低地址，右边是内存高地址（栈底），数据从右往左入栈，从左往右出栈。C语言函数的调用过程大概是：先把EIP寄存器入栈（即cpu下一条要处理的指令）作为返回地址（RET），再把EBP入栈、然后ESP的值赋给EBP（方便恢复现场），然后就是缓冲区，接收用户的输入。当该函数运行完时，回收buffer的内存，恢复ESP、EBP，然后RET出栈，继续执行之前的指令。</p>
+
+<p><img src="/img/in-post/ROP/1.PNG" alt="1" /></p>
+
+<p>如果对用户的输入长度没有限制，而输入的内容超过buffer的区域，则后面EBP和RET的内容将会被覆盖，这就造成了缓冲区溢出。如果RET被覆盖，那么当前函数执行完之后会跳转到新写入的RET地址，但一般情况这个地址是不存在的，因此程序会报错。如果精心设计一个payload，把恶意代码注入到缓冲区中，然后把RET的地址指向恶意代码的地址，即可实现对目标的攻击，比如打开一个shell。</p>
+
+<h2 id="rop-return-oriented-programming-返回导向编程">ROP (Return-oriented programming, 返回导向编程）</h2>
+
+<p>ROP 的全称为 Return-oriented programming（返回导向编程），这是一种高级的内存攻击技术，可以用来绕过现代操作系统的多种通用防御（比如 NX 和code sign 等）。ROP 的主要思想是在栈缓冲区溢出的基础上，利用程序中已有的小片段( gadgets )来改变某些寄存器或者变量的值，从而控制程序的执行流程。</p>
+
+<h3 id="ret2text">ret2text</h3>
+
+<h4 id="原理">原理</h4>
+
+<p>​		由于大多数程序都开启了NX保护（栈不可执行），所以通过注入shellcode的形式实现缓冲区溢出的手段变得不可行。Ret2text不往缓冲区中注入shellcode，只让程序返回到一些现有的代码段上，来实现攻击。</p>
+
+<h4 id="过程">过程</h4>
+
+<p>​		先用file指令查看一下程序是多少位的，发现是32位，于是将其拖入ida32中。</p>
+
+<p><img src="/img/in-post/ROP/2.PNG" alt="" /></p>
+
+<p>​		按F5查看伪代码，发现使用了gets函数（这个函数对输入长度没有限制，很危险），妥妥的存在缓冲区溢出。</p>
+
+<p><img src="/img/in-post/ROP/3.PNG" alt="" /></p>
+
+<p>​		发现secure函数中有system(“/bin/sh”)语句，这是一条执行系统调用执行shell的指令，如果控制返回地址为这条语句的值，即实现了反弹shell。按退格键查看bin/sh的内存地址。</p>
+
+<p><img src="/img/in-post/ROP/4.PNG" alt="" /></p>
+
+<p>​		看到内存地址是0x0804863A，我们需要将RET的值改写为这个地址即可实现get shell。下面只需要测出缓冲区起始地址到返回地址的空间大小，然后构造payload即可（把缓冲区填满，并且覆盖后面的RET）。</p>
+
+<p><img src="/img/in-post/ROP/5.PNG" alt="" /></p>
+
+<p>​		使用pattern.py生成200个不重复的字符（网上可以容易找到这个工具），然后打开gdb（linux下的一个调试工具），运行ret2text，把刚刚复制的内容输进去。按照一开始的分析，程序会报错，将报错地址复制下来，利用pattern查看偏移量，发现是112，说明我们需要填充112个字节的内容，就能到达RET的位置。我们再在该位置填入0x0804863A即可。</p>
+
+<p><img src="/img/in-post/ROP/6.PNG" alt="" /></p>
+
+<p>​		编写exp：在提示”anything?”后面输入112个a，然后再填上0x804863A （system(“/bin/sh”)）的地址。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">p</span><span class="o">=</span><span class="n">process</span><span class="p">(</span><span class="s">'./ret2text'</span><span class="p">)</span>
+<span class="n">addr</span><span class="o">=</span><span class="mh">0x804863A</span>
+<span class="n">p</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="s">"anything?"</span><span class="p">,</span><span class="s">'a'</span><span class="o">*</span><span class="mi">112</span><span class="o">+</span><span class="n">p32</span><span class="p">(</span><span class="n">addr</span><span class="p">))</span>
+<span class="n">p</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>​		运行exp，成功get shell</p>
+
+<p><img src="/img/in-post/ROP/7.PNG" alt="" /></p>
+:ET
