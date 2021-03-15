@@ -1,6 +1,6 @@
 > 承认自己很菜，才能变得更强。
 
-Hi，我是林鹏，你可以叫我林大帅或者林大大，嘻嘻。喜欢唱歌，喜欢R&b、流行音乐和说唱音乐，喜欢的歌手是周杰伦~你可以到我的[全民K歌主页](https://node.kg.qq.com/personal?uid=669b9484212836883d)给我送个礼物哦。性格开朗，热爱生活，热爱舞台，这里可以看到我以前的晚会演出哦：[Pray for you](https://www.bilibili.com/video/av81605974)、[告白气球+残酷月光](https://v.youku.com/v_show/id_XMTc3MTg3ODgwMA==.html)、[龙战骑士](https://v.youku.com/v_show/id_XMTM2OTQ4MjU2NA==.html)、[歌舞青春](https://v.youku.com/v_show/id_XNjY5MDkxMTky.html)。
+Hi，我是林鹏。喜欢唱歌，喜欢R&b、流行音乐和说唱音乐，喜欢的歌手是周杰伦~你可以到我的[全民K歌主页](https://node.kg.qq.com/personal?uid=669b9484212836883d)给我送个礼物哦。性格开朗，热爱生活，热爱舞台，这里可以看到我以前的晚会演出哦：[Pray for you](https://www.bilibili.com/video/av81605974)、[告白气球+残酷月光](https://v.youku.com/v_show/id_XMTc3MTg3ODgwMA==.html)、[龙战骑士](https://v.youku.com/v_show/id_XMTM2OTQ4MjU2NA==.html)、[歌舞青春](https://v.youku.com/v_show/id_XNjY5MDkxMTky.html)。
 
 == 本主页暂不更新啦 ==
 
