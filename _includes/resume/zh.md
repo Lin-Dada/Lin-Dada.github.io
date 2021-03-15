@@ -2,7 +2,7 @@
 
 Hi，我是林鹏，你可以叫我林大帅或者林大大，嘻嘻。喜欢唱歌，喜欢R&b、流行音乐和说唱音乐，喜欢的歌手是周杰伦~你可以到我的[全民K歌主页](https://node.kg.qq.com/personal?uid=669b9484212836883d)给我送个礼物哦。性格开朗，热爱生活，热爱舞台，这里可以看到我以前的晚会演出哦：[Pray for you](https://www.bilibili.com/video/av81605974)、[告白气球+残酷月光](https://v.youku.com/v_show/id_XMTc3MTg3ODgwMA==.html)、[龙战骑士](https://v.youku.com/v_show/id_XMTM2OTQ4MjU2NA==.html)、[歌舞青春](https://v.youku.com/v_show/id_XNjY5MDkxMTky.html)。
 
-目前研究生在读，研究的课题是Deep Learning Based Network Anomaly Detection（基于深度学习的网络入侵检测），未来理想的职业是Web渗透工程师。加油，奥利给~~！
+== 本主页暂不更新啦 ==
 
 ##### 教育经历
 - 2019.09-2022.06 （推免）中国科学院大学 深圳先进技术研究院 计算机技术
@@ -65,8 +65,8 @@ C语言、数据结构、计算机网络、密码学、网络攻防基础、机�
 
 ##### 技能
 + CET4、CET6
-+ 接触过：深度学习、机器学习、Web渗透、Web开发、小程序开发、App开发、单片机开发
-+ 接触过编程语言：C/C++、Python、PHP、HTML/CSS/JS
++ 了解：深度学习、机器学习、Web渗透、Web开发、小程序开发、App开发、单片机开发
++ 了解：C/C++、Java、Python、PHP、HTML/CSS/JS
 
 
 
